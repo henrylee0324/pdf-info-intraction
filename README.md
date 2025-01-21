@@ -14,8 +14,8 @@ env\Scripts\activate.bat
 env\Scripts\Activate.ps1
 
 隨後安裝所需要的 python 模組：
-pip install -r requirement.txt
+pip install -r requirements.txt
 
-創建 .enve，並依照格式填寫：
+創建 .env，並依照格式填寫：
 GEMINI_API_KEY = ""
 CLAUDE_API_KEY = ""

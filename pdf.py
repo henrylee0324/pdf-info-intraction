@@ -25,24 +25,23 @@ class Pdf:
         os.makedirs(table_image_dir, exist_ok=True)
         os.makedirs(temp_image_dir, exist_ok=True)
 
+        # 判斷表格區域是否符合篩選條件
         def is_valid_table(table, page):
             # 提取表格的數據內容
             table_data = table.extract()
             if not table_data or len(table_data) < 2:  # 表格行數少於 2，可能是誤檢
                 return False
+
             # 根據表格的大小篩選
             bbox = table.bbox
             width = bbox[2] - bbox[0]
             height = bbox[3] - bbox[1]
             if width < 50 or height < 50:  # 過小的區域排除
                 return False
+
             # 判斷文字密度
             text_objects = page.within_bbox(bbox).extract_text()
-            if not text_objects or len(text_objects.strip()) < 30:  # 文字過少可能是圖表
-                return False
-            # 檢查區域內是否包含大量圖形元素
-            graphic_elements = page.within_bbox(bbox).objects.get("line", [])
-            if len(graphic_elements) > 5:  # 如果有太多線條，可能是圖表
+            if not text_objects or len(text_objects.strip()) < 20:  # 文字過少可能是圖表
                 return False
 
             return True
@@ -52,6 +51,7 @@ class Pdf:
             for page_number, page in enumerate(pdf.pages, start=1):
                 # 提取該頁的表格
                 tables = page.find_tables()
+                print(f"number of tables: {len(tables)}")
                 valid_tables = [table for table in tables if is_valid_table(table, page)]
 
                 # 如果有有效表格，轉換該頁為圖片
@@ -77,7 +77,7 @@ class Pdf:
                 if file.lower().endswith('.png'):
                     # 檔案完整路徑
                     source_path = os.path.join(root, file)
-                    prompt = "如果圖片內是一個表格，回答 'True'，否則回答 'False'。"
+                    prompt = "如果圖片內是一個完整的表格，回答 'True'，否則回答 'False'。"
                     res = self.llm.generate(prompt=prompt, image_path = source_path)
                     if 'True' in res:
                         # 目標檔案的完整路徑
@@ -89,7 +89,7 @@ class Pdf:
                         print(f"已移動: {source_path} -> {target_path}")
                     else:
                         try:
-                            os.remove(source_path)
+                            #os.remove(source_path)
                             print(f"Deleted: {source_path}")
                         except Exception as e:
                             print(f"Error deleting {source_path}: {e}")
