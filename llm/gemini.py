@@ -1,4 +1,5 @@
 import PIL.Image
+import time
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
@@ -7,19 +8,32 @@ from llm.llm import LLM
 class GEMINI(LLM):
     def __init__(self, api_key):
         super().__init__(api_key)
-        genai.configure(api_key = self.api_key)
-    def generate(self, prompt = "", image_path = None, model_name = "gemini-1.5-pro-002"):
+        genai.configure(api_key=self.api_key)
+        self.last_execution_time = None  # 記錄上次執行時間
+
+    def generate(self, prompt="", image_path=None, model_name="gemini-1.5-pro-002", needwaiting = True):
+        current_time = time.time()
+
+        # 如果有上次執行時間，且未滿 30 秒，則等待
+        if self.last_execution_time and (current_time - self.last_execution_time < 30) and needwaiting:
+            wait_time = 30 - (current_time - self.last_execution_time)
+            print(f"Waiting for {wait_time:.2f} seconds to comply with the 30-second rule.")
+            time.sleep(wait_time)
+
         message = [prompt]
         if image_path:
             image = PIL.Image.open(image_path)
             message.append(image)
         else:
-            image = None        
+            image = None
+
         model = genai.GenerativeModel(model_name=model_name)
         try:
             response = model.generate_content(message)
             print(f"response: {response.text}")
-            return(response.text)
+            # 更新上次執行時間
+            self.last_execution_time = time.time()
+            return response.text
         except Exception as e:
             print(f"Error: {e}")
 

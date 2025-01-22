@@ -24,7 +24,8 @@ class Image2table:
             """
         else:
             self.image_detection_prompt = image_detection_prompt
-        print(f"self.image_detection_prompt: {self.image_detection_prompt}")
+        print(f"image_detection_prompt: {self.image_detection_prompt}")
+        
         self.table_check_prompt = """閱讀這個 html 格式的表格。這個表格可能排版已經亂掉了。
         如果你認為他的排版是正確的，回應與原先一樣的 html 格式表格。
         若他的排版是錯誤的，請替我修正格式後再重新回應一個新的 html 格式表格。
