@@ -1,8 +1,8 @@
 from dotenv import load_dotenv
 import shutil
 import os
-from llm.claude import CLAUDE
-from llm.gemini import GEMINI
+from llm import CLAUDE
+from llm import GEMINI
 from datetime import datetime
 import fitz  # PyMuPDF
 import os
