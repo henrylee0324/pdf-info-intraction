@@ -1,7 +1,7 @@
 # pdf_extraction_stage.py
 import os
 import streamlit as st
-from pdf import Pdf
+from .pdf import Pdf
 from default.code import pdf_extraction_code
 from default.prompt import image_detection_prompt
 from .utils import record_prompt, get_records_by_stage
