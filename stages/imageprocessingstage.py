@@ -2,7 +2,7 @@
 import os
 import streamlit as st
 from default.prompt import table_extraction_prompt
-from image import Image2table
+from .image import Image2table
 from .utils import record_prompt, get_records_by_stage
 
 class ImageProcessingStage:
